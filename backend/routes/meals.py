@@ -1,9 +1,17 @@
 from fastapi import APIRouter, HTTPException
 from datetime import date
+from datetime import datetime
 from db.database import get_connection
+from pydantic import BaseModel
+
 
 router = APIRouter()
 
+# This defines the shape of data we expect from the frontend on save
+class MealSaveRequest(BaseModel):
+    dishName: str
+    nutrition: dict
+    qualityScore: int
 
 @router.get("/meals/today")
 def get_todays_meals():
@@ -34,6 +42,35 @@ def get_todays_meals():
 
     return {"meals": meals, "date": today}
 
+@router.post("/meals/save")
+def save_meal(meal: MealSaveRequest):
+    """
+    Called only when user confirms the analysis and taps
+    'Yes, Log This Meal'. Saves to SQLite at that point.
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO meals 
+            (dish_name, calories, protein_g, carbs_g, fat_g,
+             fiber_g, sodium_mg, sugar_g, quality_score, logged_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        meal.dishName,
+        meal.nutrition.get("calories"),
+        meal.nutrition.get("protein_g"),
+        meal.nutrition.get("carbs_g"),
+        meal.nutrition.get("fat_g"),
+        meal.nutrition.get("fiber_g"),
+        meal.nutrition.get("sodium_mg"),
+        meal.nutrition.get("sugar_g"),
+        meal.qualityScore,
+        datetime.now().isoformat(),
+    ))
+    conn.commit()
+    new_id = cursor.lastrowid
+    conn.close()
+    return {"message": "Meal saved successfully", "id": new_id}
 
 @router.delete("/meals/{meal_id}")
 def delete_meal(meal_id: int):

@@ -110,29 +110,4 @@ async def analyze_meal(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to parse Gemini response: {str(e)}")
 
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute("""
-            INSERT INTO meals 
-                (dish_name, calories, protein_g, carbs_g, fat_g, 
-                 fiber_g, sodium_mg, sugar_g, quality_score, logged_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            analysis["dishName"],
-            analysis["nutrition"]["calories"],
-            analysis["nutrition"]["protein_g"],
-            analysis["nutrition"]["carbs_g"],
-            analysis["nutrition"]["fat_g"],
-            analysis["nutrition"]["fiber_g"],
-            analysis["nutrition"]["sodium_mg"],
-            analysis["nutrition"]["sugar_g"],
-            analysis["qualityScore"],
-            datetime.now().isoformat(),
-        ))
-        conn.commit()
-        conn.close()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
-
     return analysis
