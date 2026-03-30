@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Food Logger</title>
+        <link rel="stylesheet" href="css/styles.css" />
+    </head>
+    <body>
+        <!-- HEADER -->
+        <header>
+            <h1>Food Logger 🥗</h1>
+            <p id="header-date"></p>
+        </header>
+
+        <main>
+            <!-- UPLOAD SECTION -->
+            <section id="upload-section" class="card">
+                <h2>Log a Meal</h2>
+                <p class="subtitle">
+                    Take a photo of your food and we'll analyze it
+                </p>
+
+                <label for="file-input" id="upload-zone" class="upload-zone">
+                    <span class="upload-icon">📷</span>
+                    <p id="upload-text">
+                        Tap to take a photo or choose from gallery
+                    </p>
+                    <img
+                        id="image-preview"
+                        style="display: none"
+                        alt="Selected meal"
+                    />
+                </label>
+
+                <!-- ONE file input only, linked to the label above via matching id/for -->
+                <input
+                    type="file"
+                    id="file-input"
+                    accept="image/*"
+                    style="display: none"
+                />
+
+                <button
+                    id="analyze-btn"
+                    class="btn-primary"
+                    style="display: none"
+                >
+                    Analyze This Meal
+                </button>
+
+                <div id="loading-state" style="display: none">
+                    <div class="spinner"></div>
+                    <p>Analyzing your meal...</p>
+                </div>
+
+                <div id="error-state" style="display: none" class="error-box">
+                    <p id="error-message">
+                        Something went wrong. Please try again.
+                    </p>
+                    <button onclick="resetUpload()" class="btn-secondary">
+                        Try Again
+                    </button>
+                </div>
+            </section>
+            <!-- RESULTS SECTION — hidden until Gemini responds -->
+            <section id="results-section" style="display: none">
+                <!-- Dish identification + confirm buttons -->
+                <div class="card" id="dish-card">
+                    <div class="dish-header">
+                        <h2 id="dish-name"></h2>
+                        <span id="confidence-badge" class="badge"></span>
+                    </div>
+                    <p id="dish-description"></p>
+                    <p id="portion-note" class="subtle"></p>
+
+                    <!-- These are the two confirm buttons for Option B -->
+                    <!-- Only after tapping "Yes" does the meal get saved to DB -->
+                    <button id="confirm-btn" class="btn-primary">
+                        ✓ Yes, Log This Meal
+                    </button>
+                    <button onclick="resetUpload()" class="btn-secondary">
+                        ✗ Not Right, Try Again
+                    </button>
+                </div>
+
+                <!-- Nutrition breakdown -->
+                <div class="card">
+                    <h3>Nutritional Breakdown</h3>
+                    <div id="nutrition-grid" class="nutrition-grid"></div>
+                </div>
+
+                <!-- Quality score + insights -->
+                <div class="card">
+                    <h3>Meal Quality</h3>
+                    <div id="quality-display"></div>
+                    <ul id="insights-list" class="insights-list"></ul>
+                </div>
+
+                <!-- What the meal lacks vs what's in excess -->
+                <div class="card two-col">
+                    <div>
+                        <h3>What This Meal Lacks</h3>
+                        <ul id="lacks-list" class="tag-list"></ul>
+                    </div>
+                    <div>
+                        <h3>In Excess</h3>
+                        <ul id="excess-list" class="tag-list"></ul>
+                    </div>
+                </div>
+
+                <!-- Specific improvement suggestions -->
+                <div class="card">
+                    <h3>Suggestions to Improve This Meal</h3>
+                    <ul id="improvements-list" class="improvements-list"></ul>
+                </div>
+
+                <!-- Activity equivalents -->
+                <div class="card">
+                    <h3>Burn It Off 🔥</h3>
+                    <p class="subtle">
+                        To use up these calories you could do any of:
+                    </p>
+                    <div id="activities-grid" class="activities-grid"></div>
+                </div>
+            </section>
+
+            <!-- DASHBOARD SECTION — always visible -->
+            <section id="dashboard-section" class="card">
+                <h2>Today's Meals</h2>
+
+                <!-- Calorie progress toward 2000 kcal goal -->
+                <div class="progress-container">
+                    <div class="progress-labels">
+                        <span id="total-calories-label">0 kcal eaten</span>
+                        <span>2000 kcal goal</span>
+                    </div>
+                    <div class="progress-track">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                </div>
+
+                <!-- List of meals logged today -->
+                <div id="meals-list">
+                    <p class="subtle" id="empty-log-msg">
+                        No meals logged yet today.
+                    </p>
+                </div>
+            </section>
+        </main>
+
+        <!-- JS loaded at bottom so all HTML elements exist before JS runs -->
+        <script src="js/dashboard.js"></script>
+        <script src="js/results.js"></script>
+        <script src="js/upload.js"></script>
+    </body>
+</html>
