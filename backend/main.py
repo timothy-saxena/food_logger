@@ -4,8 +4,8 @@ from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 import os
 
-from db.database import init_db
-from routes import analyze, meals
+from backend.db.database import init_db
+from backend.routes import analyze, meals
 
 
 @asynccontextmanager

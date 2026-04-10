@@ -6,7 +6,7 @@ import json
 from dotenv import load_dotenv
 from datetime import datetime
 
-from db.database import get_connection
+from backend.db.database import get_connection
 
 load_dotenv()
 

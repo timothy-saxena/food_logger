@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from datetime import date
 from datetime import datetime
-from db.database import get_connection
+from backend.db.database import get_connection
 from pydantic import BaseModel
 
 
