@@ -1,7 +1,6 @@
 backend/.env
 backend/db/meals.db
 __pycache__/
-*.pyc
 *.pyo
 .venv/
 .DS_Store
